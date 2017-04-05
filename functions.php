@@ -116,23 +116,67 @@ function print_links($results) {
     echo close_table() . "</div>";
 }
 
-function print_search_form() {
+function print_search_form($page = NULL) {
+    $terms = set_search_values($page);
+
     echo '<div id="search">
-        <form method="get">
-            <input id="search_form" type="search" name="s" placeholder="Enter A Search"/>
-            <div id="options">
-                <input type="radio" name="st" value="0">Dictionary</input>
-                <input type="radio" name="st" value="1">Words in Page</input>
-                <input type="radio" name="st" value="2">Links in Page</input>
-            </div>
-        </form>
+        <form method="get" action="' . $terms['action'] . '">
+            <input id="search_form" type="search" name="s" placeholder="' . $terms["placeholder"] . '"/>';
+    print_radio_buttions($page);
+    echo '</form>
     </div>';
+}
+
+function print_radio_buttions($page) {
+    echo"<div id=\"options\">
+        <input type=\"radio\" name=\"st\" value=\"0\" " . ( $page == 'dict' ? "checked='checked'" : "" ) . " />Dictionary
+        <input type=\"radio\" name=\"st\" value=\"1\" " . ( $page == 'words' ? "checked='checked'" : "" ) . " />Words in Page
+        <input type=\"radio\" name=\"st\" value=\"2\" " . ( $page == 'links' ? "checked='checked'" : "" ) . " />Links in Page
+    </div>";
+}
+
+function set_search_values($s) {
+    if($s == 'dict') {
+        $r['placeholder'] = "Enter A Word";
+        $r['action'] = "dictionary.php";
+    }
+    elseif($s == 'words' ) {
+        $r['placeholder'] = "Enter A Link";
+        $r['action'] = "words.php";
+    }
+    elseif($s == 'links') {
+        $r['placeholder'] = "Enter A Link";
+        $r['action'] = "links.php";
+    }
+    else {
+        $r['placeholder'] = "Enter A Search";
+        $r['action'] = "index.php";
+    }
+
+    return $r;
 }
 
 function check_search_params($r = NULL) {
     if( !isset($r) ) { return false; }
-    if( $r['st'] === 0 ) { header('Location: dictionary.php'); }
-    if( $r['st'] === 1 ) { header('Location: words.php'); }
-    if( $r['st'] === 2 ) { header('Location: links.php'); }
+    if( $r['st'] === "0" ) { header('Location: dictionary.php?s=' . $r['s']); }
+    if( $r['st'] === "1" ) { header('Location: words.php?s=' . $r['s']); }
+    if( $r['st'] === "2" ) { header('Location: links.php?s=' . $r['s']); }
+}
+
+function lookup_word($conn, $s) {
+    $stmt = $conn->prepare("SELECT * FROM entries WHERE word = ?");
+    $stmt->bind_param('s', $s );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_row();
+    return $row;
+}
+
+function print_definition($row) {
+echo "<div id='def'>
+    <word>" . $row[0] . "</word>
+<word_type>" . $row[1] . "</word_type>
+<definition>" . $row[2] . "</definition>
+</div>";
 }
 ?>
