@@ -1,0 +1,40 @@
+body, table {
+    font-family: verdana;
+    font-size: 12px;
+}
+table {
+    background-color: #DDDDDD;
+    border: solid 1px black;
+    border-radius: 15px;
+    padding-bottom: 10px;
+}
+td {
+    background-color: white;
+    border: solid 1px black;
+}
+.link_name {
+    width: 15%;
+}
+.line-graph {
+    background-color: aqua;
+}
+.line_graph {
+    background-color: black;
+    width: 100px;
+}
+.table {
+    background-color: cadetblue;
+}
+.count {
+    text-align: center;
+}
+#search{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    position: static;
+    width: 400px;
+}
+#search_form {
+    width: 100%;
+}

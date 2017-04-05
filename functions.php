@@ -69,7 +69,7 @@ function open_table($r) {
 function print_link_rows($r) {
     $s = "<tr>
             <td class='link_name'><a href='" . $r[0] . "'>" . implode( "</a>, <a href='" . $r[0] . "'>",$r[1] ) . "</a></td>
-            <td>" . count($r[1]) . "</td><td>" . $r[0] . "</td><td>" . $r[2] . "</td>
+            <td class='count'>" . count($r[1]) . "</td><td><a href='?url=" . $r[0] . "'>" . $r[0] . "</a></td><td class='count'>" . $r[2] . "</td>
             <td class='line_graph'><div class='line-graph' style='width: " . ( round($r[2] / $r[3] * 100 ) ) . "%;'>&nbsp;</div></td>
           </tr>";
     return $s;
@@ -109,10 +109,10 @@ function print_links($results) {
     $k = key($r);
     $max_count = $r[$k]['count']; // Should probably be driving this with max(), take note if the sort changes
 
-    echo "<h3>links</h3>" . open_table($cols);
+    echo "<div class='table'><h3>links</h3>" . open_table($cols);
     foreach ($r as $k => $v) {
         echo print_link_rows([$k, $v['text'], $v['count'],$max_count]);
     }
-    echo close_table();
+    echo close_table() . "</div>";
 }
 ?>
