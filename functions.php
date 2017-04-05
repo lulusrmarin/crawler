@@ -59,10 +59,11 @@ function show_dom_node(DOMNode $domNode) {
 }
 
 function open_table($r) {
-    $s = "<table>";
+    $s = "<table><tr>";
     foreach($r as $item) {
         $s .= "<th>" . $item . "</th>";
     }
+    $s .= "</tr>";
     return $s;
 }
 
@@ -71,6 +72,15 @@ function print_link_rows($r) {
             <td class='link_name'><a href='" . $r[0] . "'>" . implode( "</a>, <a href='" . $r[0] . "'>",$r[1] ) . "</a></td>
             <td class='count'>" . count($r[1]) . "</td><td><a href='?url=" . $r[0] . "'>" . $r[0] . "</a></td><td class='count'>" . $r[2] . "</td>
             <td class='line_graph'><div class='line-graph' style='width: " . ( round($r[2] / $r[3] * 100 ) ) . "%;'>&nbsp;</div></td>
+          </tr>";
+    return $s;
+}
+
+function print_word_rows($k,$v,$max) {
+    $s = "<tr>
+            <td class='link_name'><a href='dictionary.php?s=" . urlencode($k) . "'>" . substr($k,0,100) . "</a></td>
+            <td class='count'>" . $v . "</td>
+            <td class='line_graph'><div class='line-graph' style='width: " . ( round($v / $max * 100 ) ) . "%;'>&nbsp;</div></td>
           </tr>";
     return $s;
 }
