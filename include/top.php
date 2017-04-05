@@ -1,6 +1,5 @@
 <?php
 require_once("env.php");
-require_once("functions.php");
 require_once("library/Zend/Dom/Query.php");
 require_once("library/Zend/Dom/DOMXPath.php");
 require_once("library/Zend/Dom/NodeList.php");
