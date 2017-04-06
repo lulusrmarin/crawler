@@ -14,6 +14,7 @@ curl_setopt($ch, CURLOPT_VERBOSE, 0);  //I don't know some shit
 curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0");
 $output = curl_exec($ch);
 
+
 if (FALSE === $output)
 throw new Exception(curl_error($ch), curl_errno($ch));
 
@@ -76,17 +77,34 @@ function print_link_rows($r) {
     return $s;
 }
 
-function print_word_rows($k,$v,$max) {
+function print_word_rows($k,$v,$max,$button = false) {
     $s = "<tr>
             <td class='link_name'><a href='dictionary.php?s=" . urlencode($k) . "'>" . substr($k,0,100) . "</a></td>
-            <td class='count'>" . $v . "</td>
-            <td class='line_graph'><div class='line-graph' style='width: " . ( round($v / $max * 100 ) ) . "%;'>&nbsp;</div></td>
+            <td class='count'>" . $v . "</td>" . ( $button === true ? '<td id="nc_button">' . print_correction_button($k) . '</td>' : "" ) .
+            "<td class='line_graph'><div class='line-graph' style='width: " . ( round($v / $max * 100 ) ) . "%;'>&nbsp;</div></td>
           </tr>";
     return $s;
 }
 
 function close_table() {
     return "</table>";
+}
+
+function print_word_table($name,$cols,$r,$button = false) {
+    $max = reset($r);
+
+    echo "<div class='word-table'>" . "<h3 class='table_title'>" . $name . "</h3>";
+    echo open_table($cols);
+    foreach($r as $k => $v) {
+        echo print_word_rows($k, $v, $max,$button);
+    }
+    echo close_table();
+    echo "</div>";
+}
+
+function print_correction_button($s) {
+    $s = "<form action='dictionary.php'><button>Is this incorrect?</button></form>";
+    return $s;
 }
 
 function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
@@ -188,5 +206,29 @@ echo "<div id='def'>
 <word_type>" . $row[1] . "</word_type>
 <definition>" . $row[2] . "</definition>
 </div>";
+}
+
+function db($dbr) {
+    $conn = new mysqli($dbr[0], $dbr[1], $dbr[2], $dbr[3]);
+    return $conn;
+}
+
+function br($i = 1) {
+    for($j = 0; $j < $i; $j++) {
+        echo "<br/>";
+    }
+}
+
+function sort_words($conn, $r) {
+    foreach( $r as $k => $v ) {
+        $row = lookup_word($conn, $k);
+        if($row) {
+            $r['words'][$k] = $v;
+        }
+        else {
+            $r['non_words'][$k] = $v;
+        }
+    }
+    return $r;
 }
 ?>

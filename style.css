@@ -1,12 +1,14 @@
 body, table {
-    font-family: verdana;
+    font-family: Verdana, SansSerif;
     font-size: 12px;
 }
 table {
     background-color: #DDDDDD;
     border: solid 1px black;
     border-radius: 15px;
+    color: black;
     padding-bottom: 10px;
+    width: 100%;
 }
 td {
     background-color: white;
@@ -15,12 +17,16 @@ td {
 h1{
     text-align: center;
 }
+button {
+    width: 100%;
+    height: 20px;
+    font-size: 10px;
+}
 word {
     font-weight: bold;
     font-size: 24px;
     margin-right: 50px;
 }
-
 word_type {
     font-weight: bold;
     font-size: 20px;
@@ -42,6 +48,19 @@ word_type {
 .count {
     text-align: center;
 }
+.word-table {
+    color: white;
+    background-color: darkslategrey;
+    border-radius: 15px;
+    border: solid 1px black;
+}
+.table_title {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 100%;
+}
 #search{
     margin-left: auto;
     margin-right: auto;
@@ -62,7 +81,9 @@ word_type {
     position: static;
     width: 400px;
 }
-
 #search_form {
     width: 100%;
+}
+#nc_button {
+    width: 10%;
 }

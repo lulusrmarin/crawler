@@ -2,7 +2,7 @@
 require_once("env.php");
 require_once("functions.php");
 check_search_params($_GET);
-$conn = new mysqli($dbr[0], $dbr[1], $dbr[2], $dbr[3]); // New DB Connection
+$conn = db($dbr); // New DB Connection
 
 /* check connection */
 if (mysqli_connect_errno()) {
