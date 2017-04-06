@@ -87,3 +87,7 @@ word_type {
 #nc_button {
     width: 10%;
 }
+#def:hover {
+    border: solid 1px royalblue;
+    border-radius: 15px;
+}

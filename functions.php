@@ -79,8 +79,8 @@ function print_link_rows($r) {
 
 function print_word_rows($k,$v,$max,$button = false) {
     $s = "<tr>
-            <td class='link_name'><a href='dictionary.php?s=" . urlencode($k) . "'>" . substr($k,0,100) . "</a></td>
-            <td class='count'>" . $v . "</td>" . ( $button === true ? '<td id="nc_button">' . print_correction_button($k) . '</td>' : "" ) .
+            <td class='link_name'><a href='dictionary.php?s=" . urlencode($k) . "'>" . substr($k,0,100) .
+            "</a></td>" . ( $button === true ? '<td id="nc_button">' . print_correction_button($k) . '</td>' : "" ) . "<td class='count'>" . $v . "</td>" .
             "<td class='line_graph'><div class='line-graph' style='width: " . ( round($v / $max * 100 ) ) . "%;'>&nbsp;</div></td>
           </tr>";
     return $s;
@@ -201,15 +201,25 @@ function lookup_word($conn, $s) {
 }
 
 function print_definition($row) {
-echo "<div id='def'>
+if( isset($row) ) {
+    echo "<div id='def'>
     <word>" . $row[0] . "</word>
-<word_type>" . $row[1] . "</word_type>
-<definition>" . $row[2] . "</definition>
-</div>";
+    <word_type>" . $row[1] . "</word_type>
+    <definition>" . $row[2] . "</definition>
+    <img src='images/icons/add.png'>
+    <img src='images/icons/pencil.png'>
+    <img src='images/icons/delete.png'>
+    </div>";
+    }
 }
 
 function db($dbr) {
     $conn = new mysqli($dbr[0], $dbr[1], $dbr[2], $dbr[3]);
+    /* check connection */
+    if (mysqli_connect_errno()) {
+        printf("Connect failed: %s\n", mysqli_connect_error());
+        exit();
+    }
     return $conn;
 }
 
