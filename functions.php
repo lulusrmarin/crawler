@@ -196,21 +196,43 @@ function lookup_word($conn, $s) {
     $stmt->bind_param('s', $s );
     $stmt->execute();
     $result = $stmt->get_result();
-    $row = $result->fetch_row();
-    return $row;
+    $rows = $result->fetch_all();
+    return $rows;
 }
 
-function print_definition($row) {
-if( isset($row) ) {
-    echo "<div id='def'>
-    <word>" . $row[0] . "</word>
-    <word_type>" . $row[1] . "</word_type>
-    <definition>" . $row[2] . "</definition>
-    <img src='images/icons/add.png'>
-    <img src='images/icons/pencil.png'>
-    <img src='images/icons/delete.png'>
-    </div>";
+function print_definitions($rows) {
+    print_add_buttons();
+    print_hidden_textbox( $rows[0][0] );
+    foreach( $rows as $row ) {
+        echo "<div id='def'>
+        <word>" . $row[0] . "</word>
+        <word_type>" . $row[1] . "</word_type>
+        <definition>" . $row[2] . "</definition>";
+        print_edit_buttons();
+        echo "</div>";
     }
+}
+
+function print_add_buttons() {
+    echo "<div id='buttons-add'>";
+    href("<img src='images/icons/add.png'>","#", NULL, 'add-button');
+    echo "</div>";
+}
+
+function print_edit_buttons() {
+    echo "<div id='buttons-edit'>";
+        href("<img src='images/icons/pencil.png'>","#", NULL,  'edit-button');
+        href("<img src='images/icons/delete.png'>","#", NULL,  'delete-button');
+    echo "</div>";
+}
+
+function print_hidden_textbox($s) {
+    echo "<div id='add-div'>
+                <textarea>Test</textarea>
+                <form action='dictionary.php'>
+                    <button name='a' value='{$s}'>Add Definition</button>
+                </form>    
+            </div>";
 }
 
 function db($dbr) {
@@ -229,6 +251,11 @@ function br($i = 1) {
     }
 }
 
+function href($text,$url,$onclick = NULL, $id = NULL) {
+    echo "<a href='" . $url . "'" . ( isset($onclick) ? " onlick=" . $onclick : "" ) .
+        ( isset($id) ? " id='" . $id . "'" : "" ) . ">" . $text . "</a>";
+}
+
 function sort_words($conn, $r) {
     foreach( $r as $k => $v ) {
         $row = lookup_word($conn, $k);
@@ -240,5 +267,9 @@ function sort_words($conn, $r) {
         }
     }
     return $r;
+}
+
+function include_jquery() {
+    echo'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
 }
 ?>
