@@ -11,4 +11,5 @@ require_once("library/Zend/Dom/Document/Query.php");
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="functions.js"></script>
+    <?= ( isset($redirect) ? '<meta http-equiv="refresh" content="1;url=' . $redirect . '" />' : '' ); ?>
 </head>

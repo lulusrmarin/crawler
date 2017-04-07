@@ -200,22 +200,43 @@ function lookup_word($conn, $s) {
     return $rows;
 }
 
+function lookup_all_words($conn) {
+    $stmt = $conn->prepare("SELECT word FROM entries");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $words = $result->fetch_all();
+    return $words;
+}
+
 function print_definitions($rows) {
     print_add_buttons();
     print_hidden_textbox( $rows[0][0] );
     foreach( $rows as $row ) {
-        echo "<div id='def'>
-        <word>" . $row[0] . "</word>
-        <word_type>" . $row[1] . "</word_type>
-        <definition>" . $row[2] . "</definition>";
-        print_edit_buttons();
-        echo "</div>";
+        print_definition($row);
     }
+}
+
+function print_definition($row) {
+    echo "<div id='def'>
+    <word>" . $row[0] . "</word>
+    <word_type>" . $row[1] . "</word_type>
+    <definition>" . $row[2] . "</definition>";
+    print_edit_buttons();
+    echo "</div>";
+}
+
+function print_random_definition($conn) {
+    $all_words = lookup_all_words($conn);
+    $i = rand(0, sizeof($all_words) );
+    echo "<h2>Word of the day</h2>";
+    $wod = $all_words[$i][0];
+    $rows = lookup_word( $conn, $wod );
+    print_definitions( $rows );
 }
 
 function print_add_buttons() {
     echo "<div id='buttons-add'>";
-    href("<img src='images/icons/add.png'>","#", NULL, 'add-button');
+    button('Add A Definition','add-button');
     echo "</div>";
 }
 
@@ -228,11 +249,25 @@ function print_edit_buttons() {
 
 function print_hidden_textbox($s) {
     echo "<div id='add-div'>
-                <textarea>Test</textarea>
-                <form action='dictionary.php'>
-                    <button name='a' value='{$s}'>Add Definition</button>
+                <form action='dictionary.php' method='post'>
+                    <select name='t'>
+                        <option value='N.'>N.</option>
+                        <option value='V.'>V.</option>
+                        <option value='Adj.'>Adj.</option>
+                        <option value=''>???</option>
+                    </select>
+                    <textarea name='d'>Test</textarea>
+                    <button name='a' value='{$s}'>Enter your definition!</button>
                 </form>    
             </div>";
+}
+
+function add_definition($conn,$r) {
+    $conn->query("INSERT INTO entries SET word = '{$r[0]}', wordtype='{$r[1]}', definition='{$r[2]}'");
+    if(!$conn->error) {
+        return true;
+    }
+    else { echo $conn->error; }
 }
 
 function db($dbr) {
@@ -254,6 +289,10 @@ function br($i = 1) {
 function href($text,$url,$onclick = NULL, $id = NULL) {
     echo "<a href='" . $url . "'" . ( isset($onclick) ? " onlick=" . $onclick : "" ) .
         ( isset($id) ? " id='" . $id . "'" : "" ) . ">" . $text . "</a>";
+}
+
+function button($text,$id) {
+    echo "<button id='{$id}'>{$text}</button>";
 }
 
 function sort_words($conn, $r) {

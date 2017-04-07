@@ -14,7 +14,7 @@ td {
     background-color: white;
     border: solid 1px black;
 }
-h1{
+h1, h2{
     text-align: center;
 }
 button {
