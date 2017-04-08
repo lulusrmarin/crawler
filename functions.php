@@ -31,20 +31,6 @@ function merge_array($r) {
     return $merge;
 }
 
-function print_array($r, $conn) {
-    arsort($r);
-    echo "<table><tr></tr><th>Word</th><th>Count</th><th>Type</th></tr>";
-    foreach ($r as $word => $count) {
-        $results = $conn->query("SELECT word, wordtype FROM entries WHERE word = '" . $word . "' AND wordtype != ''");
-        echo $conn->error; // Echo error if necessary.
-
-        $row = mysqli_fetch_object($results);
-        $type = $row->wordtype;
-        echo "<td><a href='dictionary.php?word=" . $word . "'>" . $word . "</a></td><td> " . $count . "</td><td>" . $type . "</td><tr/>";
-    }
-    echo "</table>";
-}
-
 function show_dom_node(DOMNode $domNode) {
     if(!isset($tag_array)) { $tag_array = array(); }
     foreach ($domNode->childNodes as $node)
@@ -59,13 +45,56 @@ function show_dom_node(DOMNode $domNode) {
     if($node === end( $domNode->childNodes ) ) { echo "hello"; }
 }
 
-function open_table($r) {
-    $s = "<table><tr>";
-    foreach($r as $item) {
-        $s .= "<th>" . $item . "</th>";
+function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
+    $sort_col = array();
+    foreach ($arr as $key=> $row) {
+        $sort_col[$key] = $row[$col];
     }
-    $s .= "</tr>";
-    return $s;
+
+    array_multisort($sort_col, $dir, $arr);
+}
+
+function set_search_values($s) {
+    if($s == 'dict') {
+        $r['placeholder'] = "Enter A Word";
+        $r['action'] = "dictionary.php";
+    }
+    elseif($s == 'words' ) {
+        $r['placeholder'] = "Enter A Link";
+        $r['action'] = "words.php";
+    }
+    elseif($s == 'links') {
+        $r['placeholder'] = "Enter A Link";
+        $r['action'] = "links.php";
+    }
+    else {
+        $r['placeholder'] = "Enter A Search";
+        $r['action'] = "index.php";
+    }
+
+    return $r;
+}
+
+function check_search_params($r = NULL) {
+    if( !isset($r) ) { return false; }
+    if( $r['st'] === "0" ) { header('Location: dictionary.php?s=' . $r['s']); }
+    if( $r['st'] === "1" ) { header('Location: words.php?s=' . $r['s']); }
+    if( $r['st'] === "2" ) { header('Location: links.php?s=' . $r['s']); }
+}
+
+///// Print Functions
+function print_array($r, $conn) {
+    arsort($r);
+    echo "<table><tr></tr><th>Word</th><th>Count</th><th>Type</th></tr>";
+    foreach ($r as $word => $count) {
+        $results = $conn->query("SELECT word, wordtype FROM entries WHERE word = '" . $word . "' AND wordtype != ''");
+        echo $conn->error; // Echo error if necessary.
+
+        $row = mysqli_fetch_object($results);
+        $type = $row->wordtype;
+        echo "<td><a href='dictionary.php?word=" . $word . "'>" . $word . "</a></td><td> " . $count . "</td><td>" . $type . "</td><tr/>";
+    }
+    echo "</table>";
 }
 
 function print_link_rows($r) {
@@ -80,14 +109,10 @@ function print_link_rows($r) {
 function print_word_rows($k,$v,$max,$button = false) {
     $s = "<tr>
             <td class='link_name'><a href='dictionary.php?s=" . urlencode($k) . "'>" . substr($k,0,100) .
-            "</a></td>" . ( $button === true ? '<td id="nc_button">' . print_correction_button($k) . '</td>' : "" ) . "<td class='count'>" . $v . "</td>" .
-            "<td class='line_graph'><div class='line-graph' style='width: " . ( round($v / $max * 100 ) ) . "%;'>&nbsp;</div></td>
+        "</a></td>" . ( $button === true ? '<td id="nc_button">' . print_correction_button($k) . '</td>' : "" ) . "<td class='count'>" . $v . "</td>" .
+        "<td class='line_graph'><div class='line-graph' style='width: " . ( round($v / $max * 100 ) ) . "%;'>&nbsp;</div></td>
           </tr>";
     return $s;
-}
-
-function close_table() {
-    return "</table>";
 }
 
 function print_word_table($name,$cols,$r,$button = false) {
@@ -105,15 +130,6 @@ function print_word_table($name,$cols,$r,$button = false) {
 function print_correction_button($s) {
     $s = "<form action='dictionary.php'><button>Is this incorrect?</button></form>";
     return $s;
-}
-
-function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
-    $sort_col = array();
-    foreach ($arr as $key=> $row) {
-        $sort_col[$key] = $row[$col];
-    }
-
-    array_multisort($sort_col, $dir, $arr);
 }
 
 function print_links($results) {
@@ -163,51 +179,6 @@ function print_radio_buttions($page) {
     </div>";
 }
 
-function set_search_values($s) {
-    if($s == 'dict') {
-        $r['placeholder'] = "Enter A Word";
-        $r['action'] = "dictionary.php";
-    }
-    elseif($s == 'words' ) {
-        $r['placeholder'] = "Enter A Link";
-        $r['action'] = "words.php";
-    }
-    elseif($s == 'links') {
-        $r['placeholder'] = "Enter A Link";
-        $r['action'] = "links.php";
-    }
-    else {
-        $r['placeholder'] = "Enter A Search";
-        $r['action'] = "index.php";
-    }
-
-    return $r;
-}
-
-function check_search_params($r = NULL) {
-    if( !isset($r) ) { return false; }
-    if( $r['st'] === "0" ) { header('Location: dictionary.php?s=' . $r['s']); }
-    if( $r['st'] === "1" ) { header('Location: words.php?s=' . $r['s']); }
-    if( $r['st'] === "2" ) { header('Location: links.php?s=' . $r['s']); }
-}
-
-function lookup_word($conn, $s) {
-    $stmt = $conn->prepare("SELECT * FROM entries WHERE word = ?");
-    $stmt->bind_param('s', $s );
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $rows = $result->fetch_all();
-    return $rows;
-}
-
-function lookup_all_words($conn) {
-    $stmt = $conn->prepare("SELECT word FROM entries");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $words = $result->fetch_all();
-    return $words;
-}
-
 function print_definitions($rows) {
     print_add_buttons();
     print_hidden_textbox( $rows[0][0] );
@@ -220,11 +191,12 @@ function print_definitions($rows) {
 }
 
 function print_definition($row, $i = NULL) {
+    echo $row['3'];
     echo "<div id='def'>";
     echo "<form action='dictionary.php' method='post'>";
-    echo "<word id='word{$i}'>" . $row[0] . "</word>
-    <word_type id='wt{$i}'>" . $row[1] . "</word_type>
-    <definition id='def{$i}'>" . $row[2] . "</definition>";
+    echo "<word id='word{$i}'>{$row[0]}</word>
+    <word_type id='wt{$i}'>{$row[1]}</word_type>
+    <definition id='def{$i}'>{$row[2]}</definition>";
     print_edit_buttons($i);
     echo "</form>";
     echo "</div>";
@@ -268,14 +240,13 @@ function print_hidden_textbox($s) {
             </div>";
 }
 
-function add_definition($conn,$r) {
-    $conn->query("INSERT INTO entries SET word = '{$r[0]}', wordtype='{$r[1]}', definition='{$r[2]}'");
-    if(!$conn->error) {
-        return true;
-    }
-    else { echo $conn->error; }
+function print_not_found($s) {
+    echo "<div id='def'><h2>{$s}</h2> is not in our dictionary.  If this is a valid word, please help us by adding it.</div>";
+    print_add_buttons();
+    print_hidden_textbox($s);
 }
 
+///////// DB Functions
 function db($dbr) {
     $conn = new mysqli($dbr[0], $dbr[1], $dbr[2], $dbr[3]);
     /* check connection */
@@ -284,6 +255,45 @@ function db($dbr) {
         exit();
     }
     return $conn;
+}
+
+function add_definition($conn,$r) {
+    $conn->query("INSERT INTO entries SET word = '{$r[0]}', wordtype='{$r[1]}', definition='{$r[2]}'");
+    if(!$conn->error) {
+        return true;
+    }
+    else { echo $conn->error; }
+}
+
+function lookup_word($conn, $s) {
+    $stmt = $conn->prepare("SELECT * FROM entries WHERE word = ?");
+    $stmt->bind_param('s', $s );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = $result->fetch_all();
+    return $rows;
+}
+
+function lookup_all_words($conn) {
+    $stmt = $conn->prepare("SELECT word FROM entries");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $words = $result->fetch_all();
+    return $words;
+}
+
+//////////// HTML Functions
+function open_table($r) {
+    $s = "<table><tr>";
+    foreach($r as $item) {
+        $s .= "<th>" . $item . "</th>";
+    }
+    $s .= "</tr>";
+    return $s;
+}
+
+function close_table() {
+    return "</table>";
 }
 
 function br($i = 1) {
@@ -301,6 +311,11 @@ function button($text,$id) {
     echo "<button id='{$id}'>{$text}</button>";
 }
 
+function include_jquery() {
+    echo'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
+}
+
+//Dictionary
 function sort_words($conn, $r) {
     foreach( $r as $k => $v ) {
         $row = lookup_word($conn, $k);
@@ -312,15 +327,5 @@ function sort_words($conn, $r) {
         }
     }
     return $r;
-}
-
-function include_jquery() {
-    echo'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
-}
-
-function print_not_found($s) {
-    echo "<div id='def'><h2>{$s}</h2> is not in our dictionary.  If this is a valid word, please help us by adding it.</div>";
-    print_add_buttons();
-    print_hidden_textbox($s);
 }
 ?>
