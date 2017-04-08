@@ -211,17 +211,22 @@ function lookup_all_words($conn) {
 function print_definitions($rows) {
     print_add_buttons();
     print_hidden_textbox( $rows[0][0] );
+    $i = 0;
     foreach( $rows as $row ) {
-        print_definition($row);
+        print_definition($row, $i);
+        //echo $i;
+        $i++;
     }
 }
 
-function print_definition($row) {
-    echo "<div id='def'>
-    <word>" . $row[0] . "</word>
-    <word_type>" . $row[1] . "</word_type>
-    <definition>" . $row[2] . "</definition>";
-    print_edit_buttons();
+function print_definition($row, $i = NULL) {
+    echo "<div id='def'>";
+    echo "<form action='dictionary.php' method='post'>";
+    echo "<word id='word{$i}'>" . $row[0] . "</word>
+    <word_type id='wt{$i}'>" . $row[1] . "</word_type>
+    <definition id='def{$i}'>" . $row[2] . "</definition>";
+    print_edit_buttons($i);
+    echo "</form>";
     echo "</div>";
 }
 
@@ -240,15 +245,16 @@ function print_add_buttons() {
     echo "</div>";
 }
 
-function print_edit_buttons() {
+function print_edit_buttons($i) {
     echo "<div id='buttons-edit'>";
-        href("<img src='images/icons/pencil.png'>","#", NULL,  'edit-button');
-        href("<img src='images/icons/delete.png'>","#", NULL,  'delete-button');
+        href("<img src='images/icons/pencil.png'>","#", "replace_this({$i})",  'edit-button');
+        href("<img src='images/icons/delete.png'>","#", "delete_this({$i})",  'delete-button');
     echo "</div>";
+    echo "<button style='display: none' id='add-in-edit{$i}'>Enter your definition!</button>";
 }
 
 function print_hidden_textbox($s) {
-    echo "<div id='add-div'>
+    echo "<div id='add-div'>{$s}
                 <form action='dictionary.php' method='post'>
                     <select name='t'>
                         <option value='N.'>N.</option>
@@ -287,7 +293,7 @@ function br($i = 1) {
 }
 
 function href($text,$url,$onclick = NULL, $id = NULL) {
-    echo "<a href='" . $url . "'" . ( isset($onclick) ? " onlick=" . $onclick : "" ) .
+    echo "<a href='" . $url . "'" . ( isset($onclick) ? " onClick=" . $onclick : "" ) .
         ( isset($id) ? " id='" . $id . "'" : "" ) . ">" . $text . "</a>";
 }
 
@@ -310,5 +316,11 @@ function sort_words($conn, $r) {
 
 function include_jquery() {
     echo'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
+}
+
+function print_not_found($s) {
+    echo "<div id='def'><h2>{$s}</h2> is not in our dictionary.  If this is a valid word, please help us by adding it.</div>";
+    print_add_buttons();
+    print_hidden_textbox($s);
 }
 ?>

@@ -103,3 +103,6 @@ word_type {
     border: solid 1px royalblue;
     border-radius: 15px;
 }
+#add-in-edit {
+    display: none;
+}
