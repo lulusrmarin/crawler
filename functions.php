@@ -184,19 +184,20 @@ function print_definitions($rows) {
     print_hidden_textbox( $rows[0][0] );
     $i = 0;
     foreach( $rows as $row ) {
-        print_definition($row, $i);
+        print_definition($row, $row[3]);
         //echo $i;
         $i++;
     }
 }
 
 function print_definition($row, $i = NULL) {
-    echo $row['3'];
     echo "<div id='def'>";
     echo "<form action='dictionary.php' method='post'>";
-    echo "<word id='word{$i}'>{$row[0]}</word>
-    <word_type id='wt{$i}'>{$row[1]}</word_type>
-    <definition id='def{$i}'>{$row[2]}</definition>";
+    echo "<input id ='id{$i}' type='hidden' name='i' value='{$row[3]}' />";
+    echo "<word id='word{$i}'>{$row[0]}</word>";
+    echo "<input id='hid{$i}' type='hidden' value='{$row[0]}' />";
+    echo "<word_type id='wt{$i}'>{$row[1]}</word_type>";
+    echo "<definition id='def{$i}'>{$row[2]}</definition>";
     print_edit_buttons($i);
     echo "</form>";
     echo "</div>";
@@ -229,12 +230,12 @@ function print_hidden_textbox($s) {
     echo "<div id='add-div'>{$s}
                 <form action='dictionary.php' method='post'>
                     <select name='t'>
-                        <option value='N.'>N.</option>
-                        <option value='V.'>V.</option>
-                        <option value='Adj.'>Adj.</option>
+                        <option value='n.'>n.</option>
+                        <option value='v.'>v.</option>
+                        <option value='adj.'>adj.</option>
                         <option value=''>???</option>
                     </select>
-                    <textarea name='d'>Test</textarea>
+                    <textarea name='d' placeholder='Define This Word'></textarea>
                     <button name='a' value='{$s}'>Enter your definition!</button>
                 </form>    
             </div>";
@@ -255,31 +256,6 @@ function db($dbr) {
         exit();
     }
     return $conn;
-}
-
-function add_definition($conn,$r) {
-    $conn->query("INSERT INTO entries SET word = '{$r[0]}', wordtype='{$r[1]}', definition='{$r[2]}'");
-    if(!$conn->error) {
-        return true;
-    }
-    else { echo $conn->error; }
-}
-
-function lookup_word($conn, $s) {
-    $stmt = $conn->prepare("SELECT * FROM entries WHERE word = ?");
-    $stmt->bind_param('s', $s );
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $rows = $result->fetch_all();
-    return $rows;
-}
-
-function lookup_all_words($conn) {
-    $stmt = $conn->prepare("SELECT word FROM entries");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $words = $result->fetch_all();
-    return $words;
 }
 
 //////////// HTML Functions
@@ -315,6 +291,10 @@ function include_jquery() {
     echo'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
 }
 
+function print_logo() {
+    echo "<h4 style='font-size: 32px; text-align: center;'>Tuple</h4>";
+}
+
 //Dictionary
 function sort_words($conn, $r) {
     foreach( $r as $k => $v ) {
@@ -327,5 +307,51 @@ function sort_words($conn, $r) {
         }
     }
     return $r;
+}
+
+//Todo:  Merge these functions
+function add_definition($conn, $r) {
+    $conn->query("INSERT INTO entries SET word = '{$r[0]}', wordtype='{$r[1]}', definition='{$r[2]}'");
+    if(!$conn->error) {
+        echo "<h2>That Definition Has Been Added!</h2>";
+        return true;
+    }
+    else { echo $conn->error; }
+}
+
+function update_definition($conn, $r) {
+    $conn->query("UPDATE entries SET word = '{$r[0]}', wordtype='{$r[1]}', definition='{$r[2]}' WHERE id = {$r[3]}");
+    if(!$conn->error) {
+        echo "<h2>That Definition Has Been Updated!</h2>";
+        return true;
+    }
+    else { echo $conn->error; }
+}
+
+function delete_definition($conn, $id) {
+    $conn->query("DELETE FROM entries WHERE id = {$id}");
+    if(!$conn->error) {
+        echo "<h2>That Definition Has Been Deleted!</h2>";
+        return true;
+    }
+    else { echo $conn->error; }
+}
+
+//TODO:  Parameter Bind / Prepare
+function lookup_word($conn, $s) {
+    $stmt = $conn->prepare("SELECT * FROM entries WHERE word = ?");
+    $stmt->bind_param('s', $s );
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = $result->fetch_all();
+    return $rows;
+}
+//TODO:  Parameter Bind / Prepare
+function lookup_all_words($conn) {
+    $stmt = $conn->prepare("SELECT word FROM entries");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $words = $result->fetch_all();
+    return $words;
 }
 ?>

@@ -3,10 +3,6 @@ $( document ).ready(function() {
     $('#add-button').click(function(){
         $('#add-div').show();
     });
-
-    $('#delete-button').click(function(){
-        alert("Are you sure you want to delete this definition?");
-    });
 });
 
 function replace_tag_with_input(tag) {
@@ -38,4 +34,12 @@ function replace_this(i) {
     replace_tag_with_dropdown('#wt' + i);
     replace_tag_with_textbox('#def' + i);
     $('#add-in-edit' + i).show();
+}
+
+function delete_this(i) {
+        if (confirm("Are you sure you want to delete this definition?")) {
+            $('#id' + i).attr('name', 'c');
+            $('#hid' + i).attr('name', 'a');
+            $('#id' + i).closest("form").submit();
+        }
 }
