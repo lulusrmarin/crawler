@@ -173,9 +173,9 @@ function print_search_form($page = NULL) {
 
 function print_radio_buttions($page) {
     echo"<div id=\"options\">
-        <input type=\"radio\" name=\"st\" value=\"0\" " . ( $page == 'dict' ? "checked='checked'" : "" ) . " />Dictionary
-        <input type=\"radio\" name=\"st\" value=\"1\" " . ( $page == 'words' ? "checked='checked'" : "" ) . " />Words in Page
-        <input type=\"radio\" name=\"st\" value=\"2\" " . ( $page == 'links' ? "checked='checked'" : "" ) . " />Links in Page
+        <input id='rad-dict' type=\"radio\" name=\"st\" value=\"0\" " . ( $page == 'dict' ? "checked='checked'" : "" ) . " />Dictionary
+        <input id='rad-words' type=\"radio\" name=\"st\" value=\"1\" " . ( $page == 'words' ? "checked='checked'" : "" ) . " />Words in Page
+        <input id='rad-links' type=\"radio\" name=\"st\" value=\"2\" " . ( $page == 'links' ? "checked='checked'" : "" ) . " />Links in Page
     </div>";
 }
 
@@ -247,6 +247,15 @@ function print_not_found($s) {
     print_hidden_textbox($s);
 }
 
+function print_logo() {
+    echo "<h4>Tuple</h4>";
+}
+
+function print_header_nav() {
+    define("CHAT_URL",'http://52.53.241.187:3000/');
+    echo "<div id='header-nav'><a href='" . CHAT_URL . "'>Tuple Chat</a></div>";
+}
+
 ///////// DB Functions
 function db($dbr) {
     $conn = new mysqli($dbr[0], $dbr[1], $dbr[2], $dbr[3]);
@@ -289,10 +298,6 @@ function button($text,$id) {
 
 function include_jquery() {
     echo'<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
-}
-
-function print_logo() {
-    echo "<h4 style='font-size: 32px; text-align: center;'>Tuple</h4>";
 }
 
 //Dictionary

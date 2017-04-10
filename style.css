@@ -1,3 +1,4 @@
+body { margin: 0; }
 body, table {
     font-family: Verdana, SansSerif;
     font-size: 12px;
@@ -15,6 +16,11 @@ td {
     border: solid 1px black;
 }
 h1, h2{
+    text-align: center;
+}
+h4 {
+    font-size: 36px;
+    margin: 25px 0 0 0;
     text-align: center;
 }
 button {
@@ -105,4 +111,17 @@ word_type {
 }
 #add-in-edit {
     display: none;
+}
+#header-nav {
+    color: white;
+    background-color: royalblue;
+    padding: 2px;
+    text-align: center;
+    width: 100%;
+}
+#header-nav a:link, a:hover, a:visited {
+    color: white;
+}
+#header-nav a:hover {
+    font-weight: bold;
 }

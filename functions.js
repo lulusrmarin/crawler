@@ -3,6 +3,18 @@ $( document ).ready(function() {
     $('#add-button').click(function(){
         $('#add-div').show();
     });
+
+    $('#rad-dict').click(function(){
+        $('#search_form').attr('placeholder', 'Enter A Word');
+    });
+
+    $('#rad-words').click(function(){
+        $('#search_form').attr('placeholder', 'Enter A URL');
+    });
+
+    $('#rad-links').click(function(){
+        $('#search_form').attr('placeholder', 'Enter A URL');
+    });
 });
 
 function replace_tag_with_input(tag) {

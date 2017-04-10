@@ -13,3 +13,6 @@ require_once("library/Zend/Dom/Document/Query.php");
     <script src="functions.js"></script>
     <?= ( isset($redirect) ? '<meta http-equiv="refresh" content="1;url=' . $redirect . '" />' : '' ); ?>
 </head>
+<body>
+<?php print_header_nav() ?>
+</body>
