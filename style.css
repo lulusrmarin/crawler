@@ -5,7 +5,7 @@ body, table {
 }
 table {
     background-color: #DDDDDD;
-    border: solid 1px black;
+    #border: solid 1px black;
     border-radius: 15px;
     color: black;
     padding-bottom: 10px;
@@ -57,16 +57,17 @@ word_type {
     width: 100px;
 }
 .table {
-    background-color: cadetblue;
+    background-color: royalblue;
 }
 .count {
     text-align: center;
 }
 .word-table {
     color: white;
-    background-color: darkslategrey;
+    background-color: royalblue;
     border-radius: 15px;
-    border: solid 1px black;
+    margin-top: 10px;
+    #border: solid 1px black;
 }
 .table_title {
     display: block;

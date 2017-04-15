@@ -13,6 +13,9 @@ if( isset($_GET['s']) ) {
     if($rows) {
         print_definitions($rows);
     }
+    elseif( strpos($_GET['s']," ") || $_GET['s'] == NULL ) {
+        echo "<div id='def' style='text-align: center;'>Please search a valid word</div>";
+    }
     else {
         print_not_found($_GET['s']);
     }
@@ -27,6 +30,7 @@ else if( isset($_POST['a']) && isset($_POST['t']) && isset($_POST['d'] ) ) {
         $r[3] = $_POST['i'];
         update_definition($conn,$r);
     }
+
     else { add_definition($conn,$r); }
 }
 
