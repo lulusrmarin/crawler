@@ -7,9 +7,10 @@ check_search_params($_GET);
 require_once('include/top.php');
 print_logo();
 print_search_form('words');
-$conn = db($dbr);
+$GLOBALS['db'] = $conn = db($dbr);
 
 if( isset($_GET['s']) ) {
+    $s = $_GET['s'];
     $html = url_get_contents($_GET['s']);
     $text = strip_tags($html);
     //vd($text);
@@ -21,8 +22,8 @@ if( isset($_GET['s']) ) {
 
     // Columns for table
     $cols = ["Word","Count",""];
-    print_word_table('Words',$cols,$sorted['words']);
+    print_word_table('Words', $cols, $sorted['words'], NULL, $s);
     br();
     $cols = ["Word","","Count",""];
-    print_word_table('Non-Words',$cols,$sorted['non_words'],true);
+    print_word_table('Non-Words', $cols, $sorted['non_words'],true);
 }

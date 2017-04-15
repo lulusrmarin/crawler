@@ -115,20 +115,21 @@ function print_word_rows($k,$v,$max,$button = false) {
     return $s;
 }
 
-function print_word_table($name,$cols,$r,$button = false) {
+function print_word_table($name,$cols,$r,$button = false, $s = NULL) {
     $max = reset($r);
 
     echo "<div class='word-table'>" . "<h3 class='table_title'>" . $name . "</h3>";
     echo open_table($cols);
     foreach($r as $k => $v) {
         echo print_word_rows($k, $v, $max,$button);
+        if($s) { log_word($GLOBALS['db'], [$s, $k, $v, $max ]); }
     }
     echo close_table();
     echo "</div>";
 }
 
 function print_correction_button($s) {
-    $s = "<form action='dictionary.php'><button>Is this incorrect?</button></form>";
+    $s = "<form action='dictionary.php'><button name='s' value='{$s}'>Is this incorrect?</button></form>";
     return $s;
 }
 
@@ -265,6 +266,13 @@ function db($dbr) {
         exit();
     }
     return $conn;
+}
+
+function log_word($conn, $r) {
+    $conn->query("INSERT INTO log SET log_id = '', url = '{$r[0]}', word='{$r[1]}', frequency='{$r[2]}', `timestamp` = NOW() ");
+    if($conn->error) {
+        echo $conn->error;
+    }
 }
 
 //////////// HTML Functions
