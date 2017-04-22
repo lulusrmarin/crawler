@@ -277,7 +277,7 @@ function log_word($conn, $r) {
 
 //////////// HTML Functions
 function open_table($r) {
-    $s = "<table><tr>";
+    $s = "<table class='pure-table'><tr>";
     foreach($r as $item) {
         $s .= "<th>" . $item . "</th>";
     }
@@ -350,8 +350,8 @@ function delete_definition($conn, $id) {
     else { echo $conn->error; }
 }
 
-//TODO:  Parameter Bind / Prepare
 function lookup_word($conn, $s) {
+    $s = mysql_escape_string($s);
     $stmt = $conn->prepare("SELECT * FROM entries WHERE word = ?");
     $stmt->bind_param('s', $s );
     $stmt->execute();
@@ -359,6 +359,7 @@ function lookup_word($conn, $s) {
     $rows = $result->fetch_all();
     return $rows;
 }
+
 //TODO:  Parameter Bind / Prepare
 function lookup_all_words($conn) {
     $stmt = $conn->prepare("SELECT word FROM entries");

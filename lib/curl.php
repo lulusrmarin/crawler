@@ -10,7 +10,7 @@ function url_get_contents ($url) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //Return curl contents as opposed to dumping
 	curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch'); //set encoding
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE); //follow redirects
-	curl_setopt($ch, CURLOPT_VERBOSE, 0);  //I don't know some shit
+	curl_setopt($ch, CURLOPT_VERBOSE, 0);
 	curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0");
 
     $output = curl_exec($ch);
