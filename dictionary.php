@@ -1,8 +1,12 @@
 <?php
-require_once("env.php");
 require_once("functions.php");
 check_search_params($_GET);
 if( isset($_POST['a'] ) ) { $redirect = 'dictionary.php?s=' . $_POST['a']; }
+if( isset($_POST['val'] ) ) {
+    $word = explode("-", $_POST['val'] );
+    $redirect = 'dictionary.php?s=' . $word[0];
+}
+
 require_once('include/top.php');
 
 $conn = db($dbr); // New DB Connection
@@ -26,16 +30,24 @@ else if( isset($_POST['a']) && isset($_POST['t']) && isset($_POST['d'] ) ) {
     $r[0] = $_POST['a'];
     $r[1] = $_POST['t'];
     $r[2] = $_POST['d'];
+
     if( isset($_POST['i']) ) {
         $r[3] = $_POST['i'];
         update_definition($conn,$r);
     }
-
     else { add_definition($conn,$r); }
 }
 
 else if( isset($_POST['c'] ) ) {
     delete_definition($conn, $_POST['c']);
+}
+
+else if( isset( $_POST['val'] ) ) {
+    if( isset( $_POST['val'] ) )
+        { $word = explode("-", $_POST['val'] ); }
+
+    if( change_val($conn, $word[0], $word[1]) )
+        echo "<div id='def'>You set the value of a word</div>";
 }
 
 else {

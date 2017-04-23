@@ -90,7 +90,7 @@ word_type {
 #options {
     text-align: center;
 }
-#search, #def, #add-div, #buttons-add{
+#search, #def, #add-div, #buttons-add, #val{
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
@@ -125,4 +125,10 @@ word_type {
 }
 #header-nav a:hover {
     font-weight: bold;
+}
+#pos {
+    color: green;
+}
+#neg {
+    color: red;
 }
