@@ -1,4 +1,6 @@
 <?php
+$time_start = microtime(true);
+
 require_once("functions.php");
 check_search_params($_GET);
 if( isset($_POST['a'] ) ) { $redirect = 'dictionary.php?s=' . $_POST['a']; }
@@ -53,3 +55,7 @@ else if( isset( $_POST['val'] ) ) {
 else {
     print_random_definition($conn);
 }
+
+$time_end = microtime(true);
+$execution_time = ($time_end - $time_start)/60;
+echo $execution_time . " seconds to finish.";
