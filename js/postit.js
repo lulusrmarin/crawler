@@ -3,47 +3,69 @@ $( document ).ready( function() {
 });
 
 function create_notes( data ) {
-    var w = window.innerWidth;
-    var h = window.innerHeight;
 
     $.each(data ,function(i, v) {
-        var width = Math.floor( Math.random() * w );
-        var height= Math.floor( Math.random() * h );
+        // if(v.messages.x == 0 && v.messages.x == 0) {
+        //     var width = Math.floor( Math.random() * w );
+        //     var height= Math.floor( Math.random() * h );
+        // }
+        var width = v.messages.x;
+        var height = v.messages.y;
 
-        $('body').append('<div class="post-it" style="position: absolute; top: ' + height + '; left: ' + width + ';">' +
-            'Message ID: ' + v.messages.note_id + "<br/><hr>" +
+        console.log(width + " " + height)
+
+        $('body').append('<div id= ' + v.messages.note_id + ' class="post-it" style="position: absolute; top: ' + height + '; left: ' + width + ';">' +
+            '<div class="post-head">ID: ' + v.messages.note_id + "</div><div class='align-right'>" +
+            "<span class='delete' onclick='delete_note(" + v.messages.note_id + ")'><a href='#' id='test'>[ X ]</a></span></div><br/><hr>" +
             v.messages.message + '</div>');
     })
 
-    var width = Math.floor( Math.random() * w );
-    var height= Math.floor( Math.random() * h );
-
-    $('body').append('<div class="post-it" id="new-note" style="position: absolute; top: ' + height + '; left: ' + width + ';"><b>Leave A Message</b>' +
+    $('body').append('<div class="post-it" id="new-note"><b>Leave A Message</b>' +
         '<br/><hr><textarea id="new" placeholder="Type Your Message Here" /></div>')
 }
 
 function post_note(s) {
-    alert(s);
+    pos = $('#new-note').position();
+    x = pos.left;
+    y = pos.top;
+    alert("You Posted A Message");
     $('.post-it').remove();
-    refresh_page(s);
+    refresh_page(s, x, y);
 }
 
-function refresh_page(message) {
+function delete_note(i) {
+    alert("Deleted Post: " + i);
+    $('.post-it').remove();
+    refresh_page(undefined, undefined, undefined, i);
+}
+
+function refresh_page(message, x, y, del) {
+    //console.log( del );
     $.ajax({
         type: 'POST',
         data: {
-            'test': '1',
-            'message': message
+            'post' : true,
+            'message': message,
+            'x': x,
+            'y': y,
+            'del': del
         },
         success: function (result) {
+            //console.log(result);
             var data = ( JSON.parse(result) );
+            //console.log(data);
             create_notes(data);
         },
         error: function (a) {
             console.log( JSON.stringify(a) );
         }
     }).done( function() {
-        $('.post-it').draggable();
+        $('.post-it').draggable({ stack: ".post-it" });
+
+        $('a').click( function() {
+            event.preventDefault();
+            return false;
+        });
 
         $('#new-note').keypress(function (e) {
             if (e.which == 13) {
