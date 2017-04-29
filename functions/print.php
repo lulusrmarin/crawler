@@ -178,7 +178,8 @@ function print_logo() {
 
 function print_header_nav() {
     define("CHAT_URL",'http://52.53.241.187:3000/');
-    echo "<div id='header-nav'><a href='" . CHAT_URL . "'>Tuple Chat</a></div>";
+    define("NOTES_URL",'notes.php');
+    echo "<div id='header-nav'><a href='" . CHAT_URL . "'>Chat</a> - <a href='" . NOTES_URL . "'>Notes</a></div>";
 }
 
 function print_val_buttons($word) {

@@ -30,6 +30,7 @@ textarea:focus {
 .post-it {
     background-color: #fdff9d;
     border: solid 1px black;
+    cursor: grab;
     font-size: 12px;
     min-height: 150px;
     padding: 4px;
