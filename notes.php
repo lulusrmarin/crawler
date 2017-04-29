@@ -6,7 +6,7 @@ $conn = db($dbr); // New DB Connection
 // Handle User Interaction
 if($_POST) {
     if ( $_POST['message'] ) {
-        $conn->query("INSERT INTO notes SET message = '{$_POST['message']}', created_on = NOW() x = {$_POST['x']}, y = {$_POST['y']}");
+        $conn->query("INSERT INTO notes SET message = '{$_POST['message']}', created_on = NOW(), x = {$_POST['x']}, y = {$_POST['y']}");
     }
 
     if( $_POST[ 'del' ] ) {

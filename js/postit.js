@@ -1,5 +1,6 @@
 $( document ).ready( function() {
     refresh_page();
+    draw_add_note();
 });
 
 function create_notes( data ) {
@@ -12,31 +13,33 @@ function create_notes( data ) {
         var width = v.messages.x;
         var height = v.messages.y;
 
-        console.log(width + " " + height)
+        //console.log(width + " " + height)
 
         $('body').append('<div id= ' + v.messages.note_id + ' class="post-it" style="position: absolute; top: ' + height + '; left: ' + width + ';">' +
             '<div class="post-head">ID: ' + v.messages.note_id + "</div><div class='align-right'>" +
-            "<span class='delete' onclick='delete_note(" + v.messages.note_id + ")'><a href='#' id='test'>[ X ]</a></span></div><br/><hr>" +
+            "<span class='delete'><a href='#' onClick='delete_note(" + v.messages.note_id + ")'>[ X ]</a></span></div><br/><hr>" +
             v.messages.message + '</div>');
     })
+}
 
+function draw_add_note() {
     $('body').append('<div class="post-it" id="new-note"><b>Leave A Message</b>' +
-        '<br/><hr><textarea id="new" placeholder="Type Your Message Here" /></div>')
+        '<br/><hr><textarea id="new" placeholder="Type Your Message Here" /></div>');
 }
 
 function post_note(s) {
     pos = $('#new-note').position();
-    x = pos.left;
-    y = pos.top;
-    alert("You Posted A Message");
+    var x = pos.left;
+    var y = pos.top;
     $('.post-it').remove();
     refresh_page(s, x, y);
+    draw_add_note();
 }
 
 function delete_note(i) {
-    alert("Deleted Post: " + i);
     $('.post-it').remove();
     refresh_page(undefined, undefined, undefined, i);
+    draw_add_note();
 }
 
 function refresh_page(message, x, y, del) {
@@ -51,21 +54,16 @@ function refresh_page(message, x, y, del) {
             'del': del
         },
         success: function (result) {
-            //console.log(result);
+            console.log(result);
             var data = ( JSON.parse(result) );
-            //console.log(data);
+            console.log(data);
             create_notes(data);
         },
         error: function (a) {
-            console.log( JSON.stringify(a) );
+            //console.log( JSON.stringify(a) );
         }
     }).done( function() {
         $('.post-it').draggable({ stack: ".post-it" });
-
-        $('a').click( function() {
-            event.preventDefault();
-            return false;
-        });
 
         $('#new-note').keypress(function (e) {
             if (e.which == 13) {
