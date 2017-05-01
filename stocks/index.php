@@ -24,7 +24,12 @@ function br($i = 1) {
     }
 }
 
-$url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20%3D%20%22goog%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+$ticker = 'GOOG';
+if($_GET['s']) {
+    $ticker = $_GET['s'];
+}
+
+$url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20%3D%20%22{$ticker}%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
 $result = url_get_contents($url);
 //var_dump($result);
 $data = json_decode( $result );
@@ -56,4 +61,9 @@ br();
 echo "Volume: " . $data->query->results->quote->Volume;
 br();
 echo "Stock Exchange: " . $data->query->results->quote->StockExchange;
+?>
 
+<form>
+<label>Search</label>
+    <input type="text" name="s">
+</form>
