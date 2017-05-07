@@ -1,69 +1,37 @@
 <?php
-//Use a curl (Especially useful if get_file_contents disabled on web host)
-//to pull all data from a URL
-function url_get_contents ($url)
-{
-    if (!function_exists('curl_init')) {
-        die('CURL is not installed!'); //Curl will return a false bool and die here if CURL is not enabled.
+require '../functions.php';
+require 'misc.php';
+require 'mysql.php';
+require 'print.php';
+require '../env.php';
+
+CONST BUY = 1;
+CONST SELL = 0;
+
+$conn = db($dbr);
+$ticker = ( isset($_GET['s']) ? $_GET[ 's'] : 'GOOG' );
+execute_trade($conn, [ 'type' => SELL, 'symbol' => $ticker, 'currency' => 'USD', 'value' => 10.00]);
+
+if( $_POST ) {
+    if( $_POST['test'] ) {
+        $data['state'] = get_current_state( $conn );
     }
-    $ch = curl_init(); //Return curl handle
-    curl_setopt($ch, CURLOPT_URL, $url); //The URL to fetch
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //Return curl contents as opposed to dumping
-    curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch'); //set encoding
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE); //follow redirects
-    curl_setopt($ch, CURLOPT_VERBOSE, 0);  //I don't know some shit
-    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0");
-    $output = curl_exec($ch);
 
-    return $output;
-}
-
-function br($i = 1) {
-    for($j = 0; $j < $i; $j++) {
-        echo "<br/>";
+    if( $_POST['symbol'] ) {
+        $url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20%3D%20%22{$_POST['symbol']}%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
+        $data['symbol'] = json_decode( url_get_contents($url) );
     }
+
+    echo json_encode( $data );
+    exit;
 }
-
-$ticker = 'GOOG';
-if($_GET['s']) {
-    $ticker = $_GET['s'];
-}
-
-$url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20%3D%20%22{$ticker}%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
-$result = url_get_contents($url);
-//var_dump($result);
-$data = json_decode( $result );
-
-echo "Search run on " . $data->query->created;
-br();
-echo "Data for ticker symbol: " . $data->query->results->quote->symbol;
-br();
-echo "Average Daily Volume: " . $data->query->results->quote->AverageDailyVolume;
-br();
-echo "Change: " . $data->query->results->quote->Change;
-br();
-echo "Days Low: " . $data->query->results->quote->DaysLow;
-br();
-echo "Days High: " . $data->query->results->quote->DaysHigh;
-br();
-echo "Year Low: " . $data->query->results->quote->YearLow;
-br();
-echo "Year High: " . $data->query->results->quote->YearHigh;
-br();
-echo "Market Capitalization: " . $data->query->results->quote->MarketCapitalization;
-br();
-echo "Last Trade Price: " . $data->query->results->quote->LastTradePriceOnly;
-br();
-echo "Days Range: " . $data->query->results->quote->DaysRange;
-br();
-echo "Name: " . $data->query->results->quote->Name;
-br();
-echo "Volume: " . $data->query->results->quote->Volume;
-br();
-echo "Stock Exchange: " . $data->query->results->quote->StockExchange;
 ?>
-
-<form>
-<label>Search</label>
-    <input type="text" name="s">
-</form>
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+</body>
+<script src="../js/page.js"></script>
+</html>

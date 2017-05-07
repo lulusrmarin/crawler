@@ -13,7 +13,7 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //Return curl contents as oppose
 curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate,sdch'); //set encoding
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE); //follow redirects
 curl_setopt($ch, CURLOPT_VERBOSE, 0);  //I don't know some shit
-curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0");
+curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/53.0");
 $output = curl_exec($ch);
 
 
@@ -214,4 +214,14 @@ function get_text_from_url($url) {
 
     return $merge;
 }
+
+//Basic web scraping function
+function scrape_between($data, $start, $end){
+    $data = stristr($data, $start); // Stripping all data from before $start
+    $data = substr($data, strlen($start));  // Stripping $start
+    $stop = stripos($data, $end);   // Getting the position of the $end of the data to scrape
+    $data = substr($data, 0, $stop);    // Stripping all data from after and including the $end of the data to scrape
+    return $data;   // Returning the scraped data from the function
+}
+
 ?>
