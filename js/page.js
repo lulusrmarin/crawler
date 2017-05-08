@@ -2,16 +2,22 @@
 function cl(s) { console.log(s); }
 function ap(s) { $( 'body' ).append(s); }
 
+var lt = "";
+
 function ot(t, p) {
     s = "<" + t;
     if(typeof(p) !== undefined) {
         $.each( p, function(k, v) { s += ( " " + k + '="' + v + '"'); } );
     }
     s += ">";
+    lt = t;
     return s;
 }
 
 function ct(t) {
+    if(typeof(t) === undefined) {
+        t = lt;
+    }
     return ("</" + t + ">");
 };
 
@@ -39,57 +45,56 @@ function print_search() {
 }
 
 function print_current_state(data) {
-    s = br();
-    s += ot("div");
-    s += "Cash in Account: " + data.cash;
-    s += br();
-    s += "Current trading fee: " + data.fee;
-    s += br();
-    s += "All Stocks Held: " + data.stocks;
-    s += br();
-    s += "Current Value:";
-    s += br();
-    s += "Last Change: " +data.timestamp;
-    s += ct("div");
+    s = br() + ot("div") 
+        + "Cash in Account: " + data.cash + br()
+        + "Current trading fee: " + data.fee + br()
+        + "All Stocks Held: " + data.stocks + br()
+        + "Current Value:" + br()
+        + "Last Change: " +data.timestamp
+    + ct();
     ap(s);
 }
 
 function print_stock_info(data) {
     ot('div',{ id: 'stock-info' } );
-    s = "Search run on " + data.query.created;
-    s += br();
-    s += "Data for ticker symbol: " + data.query.results.quote.symbol;
-    s += br();
-    s += "Average Daily Volume: " + data.query.results.quote.AverageDailyVolume;
-    s += br();
-    s += "Change: " + data.query.results.quote.Change;
-    s += br();
-    s += "Days Low: " + data.query.results.quote.DaysLow;
-    s += br();
-    s += "Days High: " + data.query.results.quote.DaysHigh;
-    s += br();
-    s += "Year Low: " + data.query.results.quote.YearLow;
-    s += br();
-    s += "Year High: " + data.query.results.quote.YearHigh;
-    s += br();
-    s += "Market Capitalization: " + data.query.results.quote.MarketCapitalization;
-    s += br();
-    s += "Last Trade Price: " + data.query.results.quote.LastTradePriceOnly;
-    s += br();
-    s += "Days Range: " + data.query.results.quote.DaysRange;
-    s += br();
-    s += "Name: " + data.query.results.quote.Name;
-    s += br();
-    s += "Volume: " + data.query.results.quote.Volume;
-    s += br();
-    s += "Stock Exchange: " + data.query.results.quote.StockExchange;
-    ct("div");
+    s = "Search run on " + data.query.created + br()
+    + "Data for ticker symbol: " + data.query.results.quote.symbol + br()
+    + "Average Daily Volume: " + data.query.results.quote.AverageDailyVolume + br()
+    + "Change: " + data.query.results.quote.Change + br()
+    + "Days Low: " + data.query.results.quote.DaysLow + br()
+    + "Days High: " + data.query.results.quote.DaysHigh + br()
+    + "Year Low: " + data.query.results.quote.YearLow + br()
+    + "Year High: " + data.query.results.quote.YearHigh + br()
+    + "Market Capitalization: " + data.query.results.quote.MarketCapitalization + br()
+    + "Last Trade Price: " + data.query.results.quote.LastTradePriceOnly + br()
+    + "Days Range: " + data.query.results.quote.DaysRange + br()
+    + "Name: " + data.query.results.quote.Name + br()
+    + "Volume: " + data.query.results.quote.Volume + br()
+    + "Stock Exchange: " + data.query.results.quote.StockExchange
+    ct();
     ap(s);
 }
 
-$.post( "index.php", { test: 'true', symbol: 'GOOG' } , function( data ) {
+function print_trade_history(data) {
+    s = ot("div") + ot("table",{id: 'trade-history', class: 'pure-table'})
+    + q('th','Trade ID') + q('th','Buy/Sell') + q('th','Symbol')
+    + q('th','Cost') + q('th','Currency') + q('th','Date/Time')
+    + ot("h2") + "Trade History" + ct("h2");
+    for (i = 0; i < data.length; i++) {
+        s += ot("tr")
+        for(j = 0; j < data[i].length; j++) {
+            s += ot("td") + data[i][j]; ct("td");
+        }
+        s += ct("tr");
+    }
+    s += ct("table") + ct("div");
+    ap(s);
+}
+
+$.post( "index.php", { test: 'true', symbol: 'GOOG', history: 'true' } , function( data ) {
     result = JSON.parse(data);
     console.log(result);
+    print_trade_history(result.history.trades);
     print_current_state(result.state);
     print_stock_info(result.symbol);
 });

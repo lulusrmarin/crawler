@@ -6,3 +6,8 @@ function query($conn, $sql) {
     $rows = $result->fetch_all();
     return $rows;
 }
+
+function get_table($conn, $tbl) {
+    $rows = query($conn, "SELECT * FROM {$tbl}");
+    return $rows;
+}
