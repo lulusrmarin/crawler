@@ -75,11 +75,26 @@ function print_stock_info(data) {
     ap(s);
 }
 
-function print_trade_history(data) {
-    s = ot("div") + ot("table",{id: 'trade-history', class: 'pure-table'})
+function get_trade_history(data) {
+    s = ot("div",{id: 'div-th'})
+    + ot("div") + ot("table",{id: 'trade-history', class: 'pure-table'})
     + q('th','Trade ID') + q('th','Buy/Sell') + q('th','Symbol')
-    + q('th','Cost') + q('th','Currency') + q('th','Date/Time')
-    + ot("h2") + "Trade History" + ct("h2");
+    + q('th','Cost') + q('th','Currency') + q('th','Date/Time');
+    for (i = 0; i < data.length; i++) {
+        s += ot("tr")
+        for(j = 0; j < data[i].length; j++) {
+            s += ot("td") + data[i][j]; ct("td");
+        }
+        s += ct("tr");
+    }
+    s += ct("table") + ct("div") + ct("div");
+    return s;
+}
+
+function get_account_history(data) {
+    s =  ot("div") + ot("table",{id: 'account-history', class: 'pure-table'})
+        + q('th','Trade ID') + q('th','Buy/Sell') + q('th','Symbol')
+        + q('th','Cost') + q('th','Currency') + q('th','Date/Time');
     for (i = 0; i < data.length; i++) {
         s += ot("tr")
         for(j = 0; j < data[i].length; j++) {
@@ -88,16 +103,28 @@ function print_trade_history(data) {
         s += ct("tr");
     }
     s += ct("table") + ct("div");
-    ap(s);
+    return s;
+}
+
+function accord_sub( h, s, id ) {
+    s = ot("div",{class: 'collapsible'}) + q( "h3", h ) + q( "div", s, {id: id} )
+    + ct("div");
+    return s;
 }
 
 $.post( "index.php", { test: 'true', symbol: 'GOOG', history: 'true' } , function( data ) {
     result = JSON.parse(data);
     console.log(result);
-    print_trade_history(result.history.trades);
+
+    s += accord_sub( 'Trade History',  get_trade_history(result.history.trades), 'accord-history' );
+    s += accord_sub( 'Account History', get_account_history(result.history.account), 'accord-account' );
+    ap( s );
+
     print_current_state(result.state);
     print_stock_info(result.symbol);
 });
+
+$('.collapsible').collapsible();
 
 ap( q("h1","I Trade Google") );
 br();

@@ -35,9 +35,11 @@ if( $_POST ) {
 <head>
 <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="../js/materialize.min.js"></script>
     <style>
         div {
             border: solid 1px black;
+            display: inline-block;
         }
         table {
             width: 100%;
